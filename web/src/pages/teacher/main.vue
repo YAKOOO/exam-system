@@ -1,0 +1,198 @@
+<template lang="html">
+  <div class="main">
+    <div class="left-menu">
+      <img class="logo" src="../../assets/images/logo.png" />
+      <el-menu
+        @select="selectItem"
+        default-active="home"
+        class="el-menu-vertical-demo">
+        <el-menu-item index="home">
+          <i class="el-icon-s-home"></i>
+          <span>首页</span>
+        </el-menu-item>
+        <el-menu-item index="paper" >
+          <i class="el-icon-edit-outline"></i>
+          <span>试卷管理</span>
+        </el-menu-item>
+        <el-menu-item index="question" >
+          <i class="el-icon-s-claim"></i>
+          <span>试题管理</span>
+        </el-menu-item>
+        <el-menu-item index="student" >
+          <i class="el-icon-user-solid"></i>
+          <span>学生管理</span>
+        </el-menu-item>        
+        <el-submenu index="2">
+          <template slot="title">
+            <i class="el-icon-s-tools"></i>
+            <span>个人中心</span>
+          </template>
+          <el-menu-item index="changePass">修改密码</el-menu-item>
+        </el-submenu>
+      </el-menu>
+    </div>
+    <div class="right-box">
+      <div class="top-bar clearfix">
+        <el-dropdown class="f-r" @command="handleCommand">
+          <el-button type="text" class="user-menu">
+            <i class="el-icon-user-solid"></i>
+            {{userName}}
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="exit">退出</el-dropdown-item>
+            <el-dropdown-item command="changePass">修改密码</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
+      <div class="content">
+        <router-view></router-view>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import httpServer from "@/components/httpServer/httpServer.js";
+
+export default {
+  data() {
+    return {
+      userName: "",
+    };
+  },
+  methods: {
+    handleCommand(command) {
+      if (command == "exit") {
+        localStorage.removeItem("username");
+        this.$router.push("/login");
+      } else if (command == "changePass") {
+        this.$router.push("/main/personalCenter/changePass");
+      }
+    },
+    selectItem(i) {
+      switch (i) {
+        case "home":
+          this.$router.push("/teacher/home");
+          break;
+        case "paper":
+          this.$router.push("/teacher/paperManage");
+          break;
+        case "question":
+          this.$router.push("/teacher/choosePaperId");
+          break;
+        case "student":
+          this.$router.push("/teacher/chooseClassId");
+          break;
+      }
+
+      // if (i == "examOnline") {
+      //   //点击在线考试
+      //   httpServer(
+      //     {
+      //       url: "/exam/query",
+      //     },
+      //     {
+      //       stuId: localStorage.stuId,
+      //     }
+      //   )
+      //     .then((res) => {
+      //       let respData = res.data;
+      //       // let respData = {
+      //       //   "respCode": "1",
+      //       //   "paperId": 38,
+      //       //   "instId" : 26,
+      //       // }
+      //       sessionStorage.instId = respData.instId;
+      //       if (res.data.respCode == "1") {
+      //         this.$router.push(`/main/exam/${respData.paperId}/0`);
+      //       }
+      //     })
+      //     .catch((err) => {});
+      // } else if (i == "changePass") {
+      //   this.$router.push("/main/personalCenter/changePass");
+      // }
+    },
+  },
+  created() {
+    this.userName = localStorage.username;
+  },
+  beforeCreate() {
+    if (!localStorage.username) {
+      this.$router.push("/login");
+    }
+  },
+};
+</script>
+
+<style lang="less" scoped>
+.left-menu {
+  position: absolute;
+  width: 200px;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  border-right: 1px solid #e8e8e8;
+  box-shadow: 6px 0px 3px #edeef3;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.left-menu .logo {
+  display: block;
+  width: 130px;
+  margin: 50px auto;
+}
+
+.el-menu {
+  border-right: none;
+}
+
+.right-box {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding-left: 3px;
+  min-width: 700px;
+  position: absolute;
+  top: 0;
+  left: 200px;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+  background-color: #f5f6f8;
+}
+.top-bar {
+  border: 0;
+  border-bottom: 1px solid #e8e8e8;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  line-height: 60px;
+  background-color: white;
+}
+.right-box .user-menu {
+  cursor: pointer;
+  padding: 0 20px;
+}
+
+.el-button--text {
+  color: #000;
+}
+
+.el-button--text:hover {
+  color: #000;
+}
+
+/deep/ .el-menu-item {
+  font-size: 15px;
+  color: #babdce;
+}
+
+/deep/ .el-menu-item.is-active {
+  color: #334078;
+}
+
+/deep/ .el-submenu__title {
+  font-size: 15px;
+  color: #babdce;
+}
+</style>
